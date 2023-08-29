@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ListaCompra2</string>
+    <string name="add_item">Agregar Item</string>
+    <string name="delete_all">Borrar Todo</string>
 </resources>

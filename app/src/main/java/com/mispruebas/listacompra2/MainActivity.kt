@@ -2,6 +2,7 @@ package com.mispruebas.listacompra2
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import android.content.res.Configuration
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,6 +46,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
+import androidx.compose.ui.res.stringResource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,24 +67,30 @@ class MainActivity : ComponentActivity() {
             ListaComprasUI()
         }
     }
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        // Aquí puedes verificar si el idioma ha cambiado y, si es necesario, actualizar la UI
+        recreate()  // Este método reiniciará la actividad, cargando las nuevas traducciones
+    }
 }
 
 @Composable
 fun ListaComprasUI() {
-    val llamadaCoroutina = rememberCoroutineScope()
-    val contexto = LocalContext.current
-    val (items, setItems) = remember { mutableStateOf(emptyList<Item>()) }
-    val (mostrarDialogo, setMostrarDialogo) = remember { mutableStateOf(false) }
-    val (nombreItem, setNombreItem) = remember { mutableStateOf("") }
+    val llamadaCoroutina = rememberCoroutineScope()//se crea una variable para la coroutina
+    val contexto = LocalContext.current//aca se recupera el contexto de la aplicacion
+    val (items, setItems) = remember { mutableStateOf(emptyList<Item>()) }//se crea una variable para los items
+    val (mostrarDialogo, setMostrarDialogo) = remember { mutableStateOf(false) }//
+    val (nombreItem, setNombreItem) = remember { mutableStateOf("") }//
 
-    LaunchedEffect(items) {
-        withContext(Dispatchers.IO) {
-            val dao = AppDatabase.getInstance(contexto).itemDao()
-            setItems(dao.getAllItems())
+    LaunchedEffect(items) {//aca se crea un efecto para que se ejecute la coroutina
+        withContext(Dispatchers.IO) {//aca se crea un contexto para la coroutina
+            val dao = AppDatabase.getInstance(contexto).itemDao()//
+            setItems(dao.getAllItems())//se asignan los items
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {//
 
         // Si no hay items, muestra el mensaje.
         if (items.isEmpty()) {
@@ -102,16 +110,16 @@ fun ListaComprasUI() {
                 }
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(1f))//se crea un espacio
         // Muestra los botones sin importar si hay items o no.
-        Row(
+        Row(//se crea una fila
             modifier = Modifier
                 .fillMaxWidth()//
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Button(onClick = { setMostrarDialogo(true) }) {
-                Text(text = "Agregar Item")
+                Text(text = stringResource(id = R.string.add_item))
             }
 
             // Botón de borrar todo
@@ -122,7 +130,7 @@ fun ListaComprasUI() {
                     setItems(emptyList())
                 }
             }) {
-                Text(text = "Borrar Todo")
+                Text(text = stringResource(id = R.string.delete_all))
             }
         }
 
@@ -166,7 +174,7 @@ fun DialogoAgregarItem(nombreItem: String, setNombreItem: (String) -> Unit, agre
             }
         },
         dismissButton = {
-            TextButton(onClick = { /* Lógica para cerrar el diálogo */ }) {
+            TextButton(onClick = {  }) {
                 Text("Cancelar")
             }
         }
